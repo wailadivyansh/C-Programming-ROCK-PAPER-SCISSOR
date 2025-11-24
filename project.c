@@ -34,6 +34,14 @@ int game(char you, char computer)
 
 int main()
 {
+    FILE *file;
+    file = fopen("game_log.txt", "a");  
+    if (file == NULL)
+    {
+        printf("Error opening file!\n");
+        return 1;
+    }
+
     char play_again;
     int n;
     char you, computer, result;
@@ -58,22 +66,23 @@ int main()
         if (result == -1)
         {
             printf("\n\n\t\t\tGame Draw!\n");
+            fprintf(file, "Round: Draw (You: %c, Computer: %c)\n", you, computer);
         }
         else if (result == 1)
         {
             printf("\n\n\t\t\tYou WON!\n");
             (*you_point)++;
+            fprintf(file, "Round: You WON (You: %c, Computer: %c)\n", you, computer);
         }
         else
         {
             printf("\n\n\t\t\tYou LOST!\n");
             (*comp_point)++;
+            fprintf(file, "Round: You LOST (You: %c, Computer: %c)\n", you, computer);
         }
 
-        int you_index = (you == 's' ? 0 : you == 'p' ? 1
-                                                     : 2);
-        int comp_index = (computer == 's' ? 0 : computer == 'p' ? 1
-                                                                : 2);
+        int you_index = (you == 's' ? 0 : you == 'p' ? 1 : 2);
+        int comp_index = (computer == 's' ? 0 : computer == 'p' ? 1 : 2);
 
         printf("\t\tYou chose : %s | Computer chose : %s\n",
                moves[you_index], moves[comp_index]);
@@ -89,10 +98,15 @@ int main()
 
     } while (play_again == 'Y' || play_again == 'y');
 
+    
+    fprintf(file, "\nFINAL SCORE => YOU: %d | COMPUTER: %d\n", *you_point, *comp_point);
+    fprintf(file, "--------------------------------------\n\n");
+
+    fclose(file);
+
     printf("\n\t\t----- FINAL SCOREBOARD -----\n");
     printf("\t\tYOU = %d | COMPUTER = %d\n", *you_point, *comp_point);
     printf("\t\tThanks for playing!\n");
-    
 
     return 0;
 }
